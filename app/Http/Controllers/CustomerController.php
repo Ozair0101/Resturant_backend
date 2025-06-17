@@ -15,34 +15,30 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        return response()->json($customers);
+        return response()->json([ 'data' => $customers], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(CustomerRequest $request)
     {
+        DB::beginTransaction(); 
         try {
-            DB::beginTransaction(); 
             $customer = Customer::create([
                 'name' => $request->name, 
                 'phone' => $request->phone, 
                 'address' => $request->address,
              ]);
              DB::commit(); 
-             return redirect()->back()->with('success', 'Operation completed successfully');
+             return response()->json([ 'data' => $customer , 'message' => 'Operation completed successfully']);
         } catch (\Throwable $th) {
             DB::rollBack(); 
-            return redirect()->back()->with('error', 'Something went wrong!'); 
+             return response()->json([
+                'error' => 'Something went wrong!',
+                'details' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -81,10 +77,18 @@ class CustomerController extends Controller
                 'address' => $request->address,
              ]);
              DB::commit(); 
-             return redirect()->back()->with('success', 'Operation completed successfully');
+            
+            return response()->json([
+                'data'    => $customer,
+                'message' => 'Customer updated'
+            ], 200);
+            //  return redirect()->back()->with('success', 'Operation completed successfully');
         } catch (\Throwable $th) {
             DB::rollBack(); 
-            return redirect()->back()->with('error', 'Something went wrong!'); 
+            return response()->json([
+                'error' => 'Update failed',
+                'details' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -93,12 +97,12 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer, $id)
     {
-        try {     
-            $customer = $customer->findOrFail($id); 
-            $customer = $customer->delete(); 
-            return redirect()->back()->with('success', 'Operation completed successfully');
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', 'Something went wrong!'); 
+        $customer = $customer->findOrFail($id); 
+        if (! $customer) {
+            return response()->json(['error' => 'Customer not found'], 404);
         }
+            
+        $customer->delete();
+        return response()->json(null, 204);
     }
 }
