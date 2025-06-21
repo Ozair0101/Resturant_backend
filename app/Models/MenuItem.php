@@ -13,4 +13,7 @@ class MenuItem extends Model
         'category_id',
         'is-available',
     ];
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
 }

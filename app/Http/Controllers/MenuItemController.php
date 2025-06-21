@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MenuItemRequest;
+use App\Models\Category;
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,8 @@ class MenuItemController extends Controller
     public function index()
     {
         $menuItems = MenuItem::all();
-        return response()->json(['daat']);
+        $category = Category::all() ;
+        return response()->json(['menuItem' => $menuItems,'category'=> $category]);
     }
 
 

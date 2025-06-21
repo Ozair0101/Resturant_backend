@@ -56,7 +56,7 @@ class ResturantTableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ResturantTable $resturantTable)
+    public function update(Request $request, ResturantTable $resturantTable, $id)
     {
         try {
             DB::beginTransaction(); 
@@ -87,7 +87,7 @@ class ResturantTableController extends Controller
      */
     public function destroy(ResturantTable $resturantTable, $id)
     {
-           $resturantTable = $resturantTable->findOrFail($id); 
+        $resturantTable = $resturantTable->findOrFail($id); 
         if (! $resturantTable) {
             return response()->json(['error' => 'Customer not found'], 404);
         }
