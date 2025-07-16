@@ -15,7 +15,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        return response()->json([ 'data' => $customers], 200);
+        return response()->json(['data' => $customers], 200);
     }
 
 
@@ -24,18 +24,18 @@ class CustomerController extends Controller
      */
     public function store(CustomerRequest $request)
     {
-        DB::beginTransaction(); 
+        DB::beginTransaction();
         try {
             $customer = Customer::create([
-                'name' => $request->name, 
-                'phone' => $request->phone, 
+                'name' => $request->name,
+                'phone' => $request->phone,
                 'address' => $request->address,
-             ]);
-             DB::commit(); 
-             return response()->json([ 'data' => $customer , 'message' => 'Operation completed successfully']);
+            ]);
+            DB::commit();
+            return response()->json(['data' => $customer, 'message' => 'Operation completed successfully']);
         } catch (\Throwable $th) {
-            DB::rollBack(); 
-             return response()->json([
+            DB::rollBack();
+            return response()->json([
                 'error' => 'Something went wrong!',
                 'details' => $th->getMessage()
             ], 500);
@@ -57,10 +57,10 @@ class CustomerController extends Controller
     public function edit(Customer $customer, $id)
     {
         $customer = $customer->findOrFail($id);
-        if(!$customer){
-            return response()->json(['status' => 'error', 'message' => 'Customer not found!'], 404); 
-        } 
-        return response()->json([ 'data' => $customer, 'status' => 'success'], 202);
+        if (!$customer) {
+            return response()->json(['status' => 'error', 'message' => 'Customer not found!'], 404);
+        }
+        return response()->json(['data' => $customer, 'status' => 'success'], 202);
     }
 
     /**
@@ -69,22 +69,22 @@ class CustomerController extends Controller
     public function update(CustomerRequest $request, Customer $customer, $id)
     {
         try {
-            DB::beginTransaction(); 
+            DB::beginTransaction();
             $customer = $customer->findOrFail($id);
             $customer = $customer->update([
-                'name' => $request->name, 
-                'phone' => $request->phone, 
+                'name' => $request->name,
+                'phone' => $request->phone,
                 'address' => $request->address,
-             ]);
-             DB::commit(); 
-            
+            ]);
+            DB::commit();
+
             return response()->json([
                 'data'    => $customer,
                 'message' => 'Customer updated'
             ], 200);
             //  return redirect()->back()->with('success', 'Operation completed successfully');
         } catch (\Throwable $th) {
-            DB::rollBack(); 
+            DB::rollBack();
             return response()->json([
                 'error' => 'Update failed',
                 'details' => $th->getMessage()
@@ -97,11 +97,11 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer, $id)
     {
-        $customer = $customer->findOrFail($id); 
+        $customer = $customer->findOrFail($id);
         if (! $customer) {
             return response()->json(['error' => 'Customer not found'], 404);
         }
-            
+
         $customer->delete();
         return response()->json(null, 204);
     }
