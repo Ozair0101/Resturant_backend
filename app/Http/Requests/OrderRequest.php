@@ -1,18 +1,17 @@
 <?php
 
 namespace App\Http\Requests;
-use App\enum\category;
-use Illuminate\Validation\Rule;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class MenuItemRequest extends FormRequest
+class OrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,10 +22,7 @@ class MenuItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|max:255",
-            "price" => "required",
-            'description' => "required",
-            // 'category' => ['required', Rule::in(array_column(category::cases(), 'value'))],
+            //
         ];
     }
 }

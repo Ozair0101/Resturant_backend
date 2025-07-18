@@ -16,8 +16,7 @@ class MenuItemController extends Controller
     public function index()
     {
         $menuItems = MenuItem::all();
-        $category = Category::all();
-        return response()->json(['menuItem' => $menuItems, 'category' => $category]);
+        return response()->json(['menuItem' => $menuItems], 200);
     }
 
     /**
@@ -40,8 +39,8 @@ class MenuItemController extends Controller
             $customer = MenuItem::create([
                 'name' => $request->name,
                 'price' => $request->price,
-                'is-available' => $request->is_available,
-                'category_id' => $request->category_id,
+                'is_available' => true,
+                'category' => $request->category,
                 'description' => $request->description
             ]);
             DB::commit();

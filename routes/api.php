@@ -39,10 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/menu-item/{id}', [MenuItemController::class, 'update']);
     Route::delete('/menu-item/{id}', [MenuItemController::class, 'destroy']);
 
+    Route::get('/order', [MenuItemController::class, 'index']);
+    Route::get('/order/create', [MenuItemController::class, 'create']);
+    Route::post('/order', [MenuItemController::class, 'store']);
+    Route::get('/order/{id}', [MenuItemController::class, 'edit']);
+    Route::put('/order/{id}', [MenuItemController::class, 'update']);
+    Route::delete('/order/{id}', [MenuItemController::class, 'destroy']);
 
-    Route::get('/restaurant-table', [ResturantTableController::class, 'index']);
-    Route::post('/restaurant-table', [ResturantTableController::class, 'store']);
-    Route::get('/restaurant-table/{id}', [ResturantTableController::class, 'edit']);
-    Route::put('/restaurant-table/{id}', [ResturantTableController::class, 'update']);
-    Route::delete('/restaurant-table/{id}', [ResturantTableController::class, 'destroy']);
 });

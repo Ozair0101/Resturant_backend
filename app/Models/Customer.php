@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    use HasFactory; 
-    protected $fillable = [ 'name', 'phone', 'address' ];
+    use HasFactory;
+    protected $fillable = ['name', 'phone', 'address'];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

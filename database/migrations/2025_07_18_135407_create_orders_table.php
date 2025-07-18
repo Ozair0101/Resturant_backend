@@ -1,23 +1,21 @@
 <?php
 
-use App\Models\Category;
+use App\Enum\orderStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use App\Models\Customer;
 return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('menu_items', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->decimal('price');
-            $table->boolean('is_available')->default(true);
-            $table->enum('category', \App\Enum\category::values());
+            $table->foreignIdFor(Customer::class)->constrained()->cascadeOnDelete();
+            $table->integer('table_number');
+            $table->enum('order_status', orderStatus::values());
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('menu_items');
+        Schema::dropIfExists('orders');
     }
 };
