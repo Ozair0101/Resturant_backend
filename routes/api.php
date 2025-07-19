@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ResturantTableController;
 use App\Models\MenuItem;
 
@@ -39,11 +40,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/menu-item/{id}', [MenuItemController::class, 'update']);
     Route::delete('/menu-item/{id}', [MenuItemController::class, 'destroy']);
 
-    Route::get('/order', [MenuItemController::class, 'index']);
-    Route::get('/order/create', [MenuItemController::class, 'create']);
-    Route::post('/order', [MenuItemController::class, 'store']);
-    Route::get('/order/{id}', [MenuItemController::class, 'edit']);
-    Route::put('/order/{id}', [MenuItemController::class, 'update']);
-    Route::delete('/order/{id}', [MenuItemController::class, 'destroy']);
+    Route::get('/order', [OrderController::class, 'index']);
+    Route::post('/order', [OrderController::class, 'store']);
+    Route::get('/order/create', [OrderController::class, 'create']);
+    Route::get('/order/{id}', [OrderController::class, 'edit']);
+    Route::put('/order/{id}', [OrderController::class, 'update']);
+    Route::delete('/order/{id}', [OrderController::class, 'destroy']);
 
 });

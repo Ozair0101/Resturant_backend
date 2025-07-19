@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->foreignIdFor(MenuItem::class)->constrained()->cascadeOnDelete();
             $table->integer('item_price')->nullable();
             $table->integer('quantity');
-            $table->enum('order_status', orderStatus::values());
             $table->timestamps();
         });
     }

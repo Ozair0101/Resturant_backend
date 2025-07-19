@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\category;
 use App\Enum\orderStatus;
+use App\Models\Customer;
+use App\Models\MenuItem;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Requests\OrderRequest;
@@ -27,9 +30,21 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $status = \App\Enum\orderStatus::values();
-        // dd($category);
-        return response()->json(['category' => $status], 200);
+        $status = orderStatus::values();
+        $customers = Customer::all();
+        // Get all menu items
+        $menuItems = MenuItem::whereIn('category', category::values())->get();
+
+        // Group by category
+        $grouped = $menuItems->groupBy('category');
+
+        return response()->json([
+            'status' => $status,
+            'customers' => $customers,
+            'shirini' => $grouped[category::SHIRINI_BAB->value] ?? [],
+            'khuraka' => $grouped[category::KHURAKA_BAB->value] ?? [],
+            'nushaba' => $grouped[category::NUSHABA_BAB->value] ?? [],
+        ], 200);
     }
 
     /**

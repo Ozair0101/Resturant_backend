@@ -78,7 +78,7 @@ class MenuItemController extends Controller
                 'name' => $request->name,
                 'price' => $request->price,
                 'is-available' => $request->is_available,
-                'category_id' => $request->category_id,
+                'category_id' => $request->category,
                 'description' => $request->description
             ]);
             DB::commit();
