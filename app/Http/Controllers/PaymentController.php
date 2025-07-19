@@ -44,30 +44,30 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        // Fetch order with details
-        $order = Order::with('orderDetails')->findOrFail($request->order_id);
-
-        $order->update([
-            'order_status' => $request->order_status
-        ]);
-        // Calculate total amount
-        $total = $order->orderDetails->sum(function ($detail) {
-            return $detail->item_price * $detail->quantity;
-        });
 
         DB::beginTransaction();
         try {
+            // Fetch order with details
+            $order = Order::with('orderDetails')->findOrFail($request->order_id);
+
+            $order->update([
+                'order_status' => $request->order_status
+            ]);
+            //     // // Calculate total amount
+            $total = $order->orderDetails->sum(function ($detail) {
+                return $detail->item_price * $detail->quantity;
+            });
             $payment = Payment::create([
                 'order_id' => $request->order_id,
                 'amount' => $total,
-                'payment_method' => $request->address, // Probably should be $request->payment_method
+                'payment_method' => $request->payment_method, // Probably should be $request->payment_method
             ]);
 
             DB::commit();
             return response()->json([
-                'data' => $payment,
+                // 'data' => $payment,
                 'message' => 'Operation completed successfully'
-            ]);
+            ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
