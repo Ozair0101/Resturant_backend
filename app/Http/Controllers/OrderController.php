@@ -23,8 +23,8 @@ class OrderController extends Controller
     {
         $orders = Order::with('customer', 'orderDetails')
             ->whereNotIn('order_status', [
-                orderStatus::COMPLETED->value,
-                orderStatus::SERVED->value
+                orderStatus::OWNER->value,
+                orderStatus::CLEANER->value
             ])
             ->get()
             ->map(function ($order) {
@@ -55,8 +55,8 @@ class OrderController extends Controller
         // Get all statuses except SERVED and COMPLETED
         $status = array_filter(orderStatus::values(), function ($s) {
             return !in_array($s, [
-                orderStatus::SERVED->value,
-                orderStatus::COMPLETED->value
+                orderStatus::CLEANER->value,
+                orderStatus::OWNER->value
             ]);
         });
 

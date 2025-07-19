@@ -16,9 +16,9 @@ class PaymentController extends Controller
     {
         $orders = Order::with('customer', 'orderDetails')
             ->whereNotIn('order_status', [
-                orderStatus::PENDING->value,
-                orderStatus::PREPARING->value,
-                orderStatus::COMPLETED->value,
+                orderStatus::MANAGER->value,
+                orderStatus::STAFF->value,
+                orderStatus::OWNER->value,
             ])
             ->get()
             ->map(function ($order) {
@@ -84,7 +84,7 @@ class PaymentController extends Controller
     public function revenue()
     {
         $orders = Order::with('customer', 'orderDetails')
-            ->where('order_status', orderStatus::COMPLETED->value)
+            ->where('order_status', orderStatus::OWNER->value)
             ->get()
             ->map(function ($order) {
                 $total = $order->orderDetails->sum(function ($detail) {

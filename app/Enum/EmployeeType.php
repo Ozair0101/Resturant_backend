@@ -2,12 +2,12 @@
 
 namespace App\Enum;
 
-enum orderStatus: string
+enum EmployeeType: string
 {
-    case MANAGER = 'Pending';
-    case STAFF = 'Preparing';
-    case CLEANER = 'Served';
-    case OWNER = 'Completed';
+    case MANAGER = 'Manger';
+    case STAFF = 'Staff';
+    case CLEANER = 'Cleaner';
+    case OWNER = 'Owner';
 
     public static function values(): array
     {
@@ -22,10 +22,10 @@ enum orderStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::MANAGER => 'Pending',
-            self::STAFF => 'Preparing',
-            self::CLEANER => 'Served',
-            self::OWNER => 'Completed',
+            self::MANAGER => 'Manger',
+            self::STAFF => 'Staff',
+            self::CLEANER => 'Cleaner',
+            self::OWNER => 'Owner',
         };
     }
 }
