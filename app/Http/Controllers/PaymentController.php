@@ -81,9 +81,27 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Payment $payment)
+    public function revenue()
     {
-        //
+        $orders = Order::with('customer', 'orderDetails')
+            ->where('order_status', orderStatus::COMPLETED->value)
+            ->get()
+            ->map(function ($order) {
+                $total = $order->orderDetails->sum(function ($detail) {
+                    return $detail->item_price * $detail->quantity;
+                });
+
+                return [
+                    'id' => $order->id,
+                    'customer' => $order->customer->name ?? 'Unknown',
+                    'total' => $total,
+                    'status' => $order->order_status,
+                    'date' => $order->created_at->format('Y-m-d'),
+                    'table_number' => $order->table_number,
+                ];
+            });
+
+        return response()->json(['orders' => $orders], 200);
     }
 
     /**

@@ -51,5 +51,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/payment', [PaymentController::class, 'index']);
     Route::post('/payment', [PaymentController::class, 'store']);
-
+    Route::get('/revenue', [PaymentController::class, 'revenue']);
 });
