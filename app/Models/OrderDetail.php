@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderDetails extends Model
+class OrderDetail extends Model
 {
     // use HasFactory;
-    protected $fillable = ['menu_items_id', 'order_id', 'quantity', 'item_price'];
+    protected $fillable = ['menu_item_id', 'order_id', 'quantity', 'item_price'];
 
     public function order()
     {

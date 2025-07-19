@@ -7,8 +7,13 @@ use App\Enum\orderStatus;
 use App\Models\Customer;
 use App\Models\MenuItem;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use App\Http\Requests\OrderRequest;
+use App\Models\OrderDetails;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+
 class OrderController extends Controller
 {
     /**
@@ -16,13 +21,30 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::whereNotIn('order_status', [
-            orderStatus::COMPLETED->value,
-            orderStatus::SERVED->value
-        ])->get();
+        $orders = Order::with('customer', 'orderDetails')
+            ->whereNotIn('order_status', [
+                orderStatus::COMPLETED->value,
+                orderStatus::SERVED->value
+            ])
+            ->get()
+            ->map(function ($order) {
+                $total = $order->orderDetails->sum(function ($detail) {
+                    return $detail->item_price * $detail->quantity;
+                });
 
-        return response()->json(['menuItem' => $orders], 200);
+                return [
+                    'id' => $order->id,
+                    'customer' => $order->customer->name ?? 'Unknown',
+                    'total' => $total,
+                    'status' => $order->order_status,
+                    'date' => $order->created_at->format('Y-m-d'),
+                    'table_number' => $order->table_number,
+                ];
+            });
+
+        return response()->json(['orders' => $orders], 200);
     }
+
 
 
     /**
@@ -30,8 +52,16 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $status = orderStatus::values();
+        // Get all statuses except SERVED and COMPLETED
+        $status = array_filter(orderStatus::values(), function ($s) {
+            return !in_array($s, [
+                orderStatus::SERVED->value,
+                orderStatus::COMPLETED->value
+            ]);
+        });
+
         $customers = Customer::all();
+
         // Get all menu items
         $menuItems = MenuItem::whereIn('category', category::values())->get();
 
@@ -39,7 +69,7 @@ class OrderController extends Controller
         $grouped = $menuItems->groupBy('category');
 
         return response()->json([
-            'status' => $status,
+            'status' => array_values($status), // reset array keys
             'customers' => $customers,
             'shirini' => $grouped[category::SHIRINI_BAB->value] ?? [],
             'khuraka' => $grouped[category::KHURAKA_BAB->value] ?? [],
@@ -47,20 +77,32 @@ class OrderController extends Controller
         ], 200);
     }
 
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OrderRequest $request)
+
+    public function store(Request $request)
     {
         DB::beginTransaction();
         try {
+            // Create order
             $order = Order::create([
                 'order_status' => $request->order_status,
                 'customer_id' => $request->customer_id,
                 'table_number' => $request->table_number,
             ]);
+
+            foreach ($request->items as $item) {
+                $menu = MenuItem::findOrFail($item['menu_item_id']);
+                $order->orderDetails()->create([
+                    'menu_item_id' => $item['menu_item_id'], // must match column name
+                    'quantity' => $item['quantity'],
+                    'item_price' => $menu->price,
+                ]);
+            }
             DB::commit();
-            return response()->json(['data' => $order, 'message' => 'Operation completed successfully']);
+            return response()->json(['data' => $order, 'message' => 'Order created successfully!']);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -88,21 +130,21 @@ class OrderController extends Controller
     public function update(OrderRequest $request, Order $order, $id)
     {
         try {
-            DB::beginTransaction();
+            // DB::beginTransaction();
             $order = $order->findOrFail($id);
             $order = $order->update([
                 'order_status' => $request->order_status,
                 'customer_id' => $request->customer_id,
                 'table_number' => $request->table_number,
             ]);
-            DB::commit();
+            // DB::commit();
 
             return response()->json([
                 'data' => $order,
                 'message' => 'Order updated'
             ], 200);
         } catch (\Throwable $th) {
-            DB::rollBack();
+            // DB::rollBack();
             return response()->json([
                 'error' => 'Update failed',
                 'details' => $th->getMessage()
@@ -122,5 +164,25 @@ class OrderController extends Controller
 
         $order->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Update the status resource in storage.
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'order_status' => [
+                'required',
+                'string',
+                Rule::in(orderStatus::values()), // Use enum values for validation
+            ],
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->order_status = $request->order_status;
+        $order->save();
+
+        return response()->json(['message' => 'Order status updated successfully', 'order' => $order], 200);
     }
 }
