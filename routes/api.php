@@ -10,6 +10,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ResturantTableController;
+use App\Http\Controllers\TableController;
 use App\Models\MenuItem;
 
 Route::get('/user', function (Request $request) {
@@ -59,4 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/employee/{id}', [EmployeeController::class, 'edit']);
     Route::put('/employee/{id}', [EmployeeController::class, 'update']);
     Route::delete('/employee/{id}', [EmployeeController::class, 'destroy']);
+
+    Route::get('/table', [TableController::class, 'index']);
+    Route::get('/table/create', [TableController::class, 'create']);
+    Route::post('/table', [TableController::class, 'store']);
 });
