@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -30,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
+    
     Route::get('/customer', [CustomerController::class, 'index']);
     Route::post('/customer', [CustomerController::class, 'store']);
     Route::get('/customer/{id}', [CustomerController::class, 'edit']);
@@ -64,4 +67,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/table', [TableController::class, 'index']);
     Route::get('/table/create', [TableController::class, 'create']);
     Route::post('/table', [TableController::class, 'store']);
+
+    
 });
