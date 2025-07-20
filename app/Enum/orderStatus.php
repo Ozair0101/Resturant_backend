@@ -4,28 +4,28 @@ namespace App\Enum;
 
 enum orderStatus: string
 {
-    case MANAGER = 'Pending';
-    case STAFF = 'Preparing';
-    case CLEANER = 'Served';
-    case OWNER = 'Completed';
+    case PENDING = 'Pending';
+    case PREPARING = 'Preparing';
+    case SERVED = 'Served';
+    case COMPLETED = 'Completed';
 
     public static function values(): array
     {
         return [
-            self::MANAGER->value,
-            self::STAFF->value,
-            self::CLEANER->value,
-            self::OWNER->value,
+            self::PENDING->value,
+            self::PREPARING->value,
+            self::SERVED->value,
+            self::COMPLETED->value,
         ];
     }
 
     public function label(): string
     {
         return match ($this) {
-            self::MANAGER => 'Pending',
-            self::STAFF => 'Preparing',
-            self::CLEANER => 'Served',
-            self::OWNER => 'Completed',
+            self::PENDING => 'Pending',
+            self::PREPARING => 'Preparing',
+            self::SERVED => 'Served',
+            self::COMPLETED => 'Completed',
         };
     }
 }
